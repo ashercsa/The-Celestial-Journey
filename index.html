@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestial Journey</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+            color: #4a4e69;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #fdf7e4;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 26px;
+            font-weight: bold;
+            color: #6a0572;
+        }
+        input, select, button {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 2px solid #6a0572;
+            outline: none;
+            font-size: 14px;
+        }
+        button {
+            background-color: #6a0572;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #b8c0ff;
+        }
+        th {
+            background-color: #6a0572;
+            color: white;
+        }
+        .delete-btn, .complete-btn {
+            background-color: #ff6b81;
+            color: white;
+            border: none;
+            padding: 3px 7px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .complete-btn {
+            background-color: #77dd77;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+        .progress-container {
+            margin-top: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #b8c0ff;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 20px;
+            margin-top: 10px;
+        }
+        .progress {
+            height: 100%;
+            width: 0;
+            background-color: #77dd77;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Celestial Journey</h1>
+        <p>The universe whispers to those who seek knowledge. Listen, Learn & Evolve.</p>
+        
+        <input type="text" id="taskInput" placeholder="Add a new study task...">
+        <select id="daySelect">
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+        <input type="time" id="taskTime">
+        <button onclick="addTask()">Add Task</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>📅 Day</th>
+                    <th>⏰ Time</th>
+                    <th>📚 Task</th>
+                    <th style="width: 10%;">✔</th>
+                    <th style="width: 10%;">❌</th>
+                </tr>
+            </thead>
+            <tbody id="taskTableBody"></tbody>
+        </table>
+        
+        <div class="progress-container">
+            <h2>📊 Progress Tracker</h2>
+            <div class="progress-bar">
+                <div class="progress" id="progress">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addTask() {
+            let daySelect = document.getElementById("daySelect");
+            let taskInput = document.getElementById("taskInput");
+            let taskTime = document.getElementById("taskTime");
+            let taskText = taskInput.value.trim();
+            let selectedDay = daySelect.value;
+            let timeValue = taskTime.value;
+
+            if (taskText === "" || timeValue === "") return;
+
+            let [hours, minutes] = timeValue.split(":");
+            let ampm = hours >= 12 ? "PM" : "AM";
+            hours = hours % 12 || 12;
+            let formattedTime = `${hours}:${minutes} ${ampm}`;
+
+            let taskTableBody = document.getElementById("taskTableBody");
+            let row = document.createElement("tr");
+            row.innerHTML = `<td>${selectedDay}</td>
+                             <td>${formattedTime}</td>
+                             <td>${taskText}</td>
+                             <td><button class='complete-btn' onclick='completeTask(this)'>✔</button></td>
+                             <td><button class='delete-btn' onclick='deleteTask(this)'>✖</button></td>`;
+            taskTableBody.appendChild(row);
+            
+            taskInput.value = "";
+            taskTime.value = "";
+            updateProgress();
+        }
+        
+        function deleteTask(btn) {
+            btn.parentElement.parentElement.remove();
+            updateProgress();
+        }
+        
+        function completeTask(btn) {
+            let row = btn.parentElement.parentElement;
+            row.classList.toggle("completed");
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            let tasks = document.querySelectorAll("#taskTableBody tr").length;
+            let completedTasks = document.querySelectorAll("#taskTableBody tr.completed").length;
+            let progress = tasks === 0 ? 0 : Math.round((completedTasks / tasks) * 100);
+            
+            document.getElementById("progress").style.width = progress + "%";
+            document.getElementById("progress").innerText = progress + "%";
+        }
+    </script>
+</body>
+</html>
